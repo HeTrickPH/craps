@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>craps</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Bootstrap -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+<!-- loodash -->
+<script src="https://rawgit.com/lodash/lodash/3.0.1/lodash.min.js"></script>
+
+<!--AngularJS-->
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+
+<!--Main JavaScript-->
+<script src="ngJS.js"></script>
+
+<link rel="stylesheet" type="text/css" href="crapsCSS.css">
+
+</head>
+
+<body>
+
+<div ng-app="crapsApp" ng-controller="crapsCtrlr">
+	<div class="container-fluid">
+		<div class="row content">
+			<!--box one-->
+			<div class="col-md-10" id="box1">
+				<div class="container-fluid">
+					<div class="row">
+						<!--Place Bet-->
+						<div class="col-sm-1" id="onButttonArea">
+							<div id="offButtonDiv" style="position: relative;" >
+								<img id="onButtonImg" src="img/offButton.png" width="45px" height="45px">
+							</div>						
+						</div>
+						<div class="col-sm-11" id="placeBetArea">
+							<table class="table table-bordered" id="placeBet">
+								<tbody>
+									<tr>
+										<td class="placeBetNumber" ng-click="addToPlaceBet(4)">
+											4
+											<div id="onBtn4" class="onButArea col-2"></div>
+										</td>
+										<td class="placeBetNumber" ng-click="addToPlaceBet(5)">
+											5
+											<div id="onBtn5" class="onButArea col-2"></div>
+										</td>
+										<td class="placeBetNumber" ng-click="addToPlaceBet(6)">
+											6
+											<div id="onBtn6" class="onButArea col-2"></div>
+										</td>
+										<td class="placeBetNumber" ng-click="addToPlaceBet(8)">
+											8
+											<div id="onBtn8" class="onButArea col-2"></div>
+										</td>
+										<td class="placeBetNumber" ng-click="addToPlaceBet(9)">
+											9
+											<div id="onBtn9" class="onButArea col-2"></div>
+										</td>
+										<td class="placeBetNumber" ng-click="addToPlaceBet(10)">
+											10
+											<div id="onBtn10" class="onButArea col-2"></div>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											$<b id="BetOnFour" class="placebet">{{placeNumbers[0].amtbet}}</b>
+										</td>
+										<td>
+											$<b id="BetOnFive" class="placebet">{{placeNumbers[1].amtbet}}</b>
+										</td>
+										<td>
+											$<b id="BetOnSix" class="placebet">{{placeNumbers[2].amtbet}}</b>
+										</td>
+										<td>
+											$<b id="BetOnEight" class="placebet">{{placeNumbers[3].amtbet}}</b>
+										</td>
+										<td>
+											$<b id="BetOnNine" class="placebet">{{placeNumbers[4].amtbet}}</b>
+										</td>
+										<td>
+											$<b id="BetOnTen" class="placebet">{{placeNumbers[5].amtbet}}</b>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+
+						
+						<!--Main area-->
+						<div class="container-fluid" id="area">
+							<div class="row">
+								<div class="col-sm-8">
+									<div class="row">									
+										<!-- Dices & On Number-->
+										<div class="col-4">
+											<div class="row">
+												<div class="col-6" id="diceArea">
+													<div id="D1"></div>
+													<div id="D2"></div>
+												</div>
+												<div class="col-6" id="onNumberArea">
+													<b style="font-size:18px">On Number</b>
+													<div id="onNumber">{{onNumber}}</div>
+												</div>
+											</div>										
+										</div>
+										
+										<!--come & field-->
+										<div class="col-8">
+											<table class="table table-bordered">
+												<tr>
+													<td>
+														<div id="come">Come</div>
+														$<b id="">0</b>
+													</td>
+												</tr>
+												<tr>
+													<td>
+														<div id="field">Field</div>
+														$<b id="">0</b>
+													</td>
+												</tr>		
+											</table>
+										</div>
+									
+										<!--Pass Line-->
+										<div class="col-12">
+											<div class="row content">
+												<div class="col-12 pass_lines" id="PassLineArea" ng-click="addToPassLineBet()">
+													<b>Pass Line</b>
+													$<b id="PassLineBetting">{{PassLine}}</b>
+												</div>
+												
+												<div class="col-12 pass_lines" id="OddPassLineArea" ng-click="OddPassLineBet()" style="display:none">
+													<b>Odd Pass Line</b>
+													$<b id="OddPassLineBetting">{{OddPassLine}}</b>
+												</div>
+											</div> 
+										</div>											
+										<div class="col-3">
+											<div class="row">
+												<div id="Money" class="col-12">{{cashInWallet}}</div>
+												<p class="col-12">Current bet: {{currentBetAmount}}</p>
+												<p class="col-12">Current op: {{currentOp}}</p>													
+											</div>
+										</div>	
+										<div class="col-3">
+											<input type="button" id="Roll_first" value="come out roll" class="roll btn btn-primary" ng-model="comeoutRoll" ng-click="comeoutRoll()">
+											<input type="button" id="Roll_second" value="roll dice" class="roll btn btn-primary" ng-model="rollDice" style="display: none" ng-click="rollDice()">
+										</div>
+										<div class="col-3">
+											<input type="button" value="1" class="moneyBut" id="coin1" ng-click="chooseCurrentBetAmount(1)">
+											<input type="button" value="5" class="moneyBut" id="coin5" ng-click="chooseCurrentBetAmount(5)">
+											<input type="button" value="25" class="moneyBut" id="coin25" ng-click="chooseCurrentBetAmount(25)">
+											<input type="button" value="100" class="moneyBut" id="coin100" ng-click="chooseCurrentBetAmount(100)">
+											<input type="button" value="500" class="moneyBut" id="coin500" ng-click="chooseCurrentBetAmount(500)">
+											<input type="button" value="1000" class="moneyBut" id="coin1000" ng-click="chooseCurrentBetAmount(1000)">
+										</div>
+									</div> 
+									
+								</div>
+								
+
+								<div class="col-sm-4">
+									<!-- Hard Way & Horn -->
+									<div class="col-12">
+										<!--Hard Way-->
+										<table class="table table-bordered">
+											<tr>
+												<td>
+													<b style="font-family:Constantia;">SEVEN</b>
+													<span>5 : 1</span>
+													<input type="button" value="bet" class="btn btn-secondary" ng-click=""><b id="">$0</b>
+												</td>
+												<td>
+													<b style="font-family:Constantia;">ANY CRAPS</b>
+													<span>8 : 1</span>
+													<input type="button" value="bet" class="btn btn-secondary" ng-click=""><b id="">$0</b>
+												</td>
+											</tr>
+											<tr>
+												<td class="" ng-click="betOnHardWays('3-3')">
+													<img src="img/Dice3.png" width="40px" height="40px">
+													<img src="img/Dice3.png" width="40px" height="40px">												
+													<b class="betAmt" id="BetOnDThree">${{hardWaysNumbers[1].amtbet}}</b><br>
+													<span>10 : 1</span>
+												</td>
+												<td class="" ng-click="betOnHardWays('5-5')">
+													<img src="img/Dice5.png" width="40px" height="40px">
+													<img src="img/Dice5.png" width="40px" height="40px">
+													<b class="betAmt" id="BetOnDFive">${{hardWaysNumbers[3].amtbet}}</b><br>
+													<span>8 : 1</span>
+												</td>
+											</tr>
+											<tr>
+												<td class="" ng-click="betOnHardWays('4-4')">
+													<img src="img/Dice4.png" width="40px" height="40px">
+													<img src="img/Dice4.png" width="40px" height="40px">
+													<b class="betAmt" id="BetOnDFore">${{hardWaysNumbers[2].amtbet}}</b><br>
+													<span>10 : 1</span>
+												</td>
+												<td class="" ng-click="betOnHardWays('2-2')">
+													<img src="img/Dice2.png" width="40px" height="40px">
+													<img src="img/Dice2.png" width="40px" height="40px">
+													<b class="betAmt" id="BetOnDTwo">${{hardWaysNumbers[0].amtbet}}</b><br>
+													<span>8 : 1</span>
+												</td>
+											</tr>										
+											<tr>
+												<td colspan="2">
+													Horn
+													<input type="button" value="bet" class="btn btn-secondary" ng-click="">$<b id="">0</b>
+												</td>
+											</tr>
+											<tr>
+												<td class="" ng-click="betOnHorn('1-2')">
+													<img src="img/Dice1.png" width="40px" height="40px">
+													<img src="img/Dice2.png" width="40px" height="40px">
+													<b class="betAmt" id="BetOnOneTwo">${{hornNumbers[1].amtbet}}</b><br>
+													<span>15 : 1</span>
+												</td>
+												<td class="" ng-click="betOnHorn('1-1')">
+													<img src="img/Dice1.png" width="40px" height="40px">
+													<img src="img/Dice1.png" width="40px" height="40px">
+													<b class="betAmt" id="BetOnOneOne">${{hornNumbers[0].amtbet}}</b><br>
+													<span>30 : 1</span>
+												</td>
+											</tr>
+											<tr>
+												<td class="" ng-click="betOnHorn('6-6')">
+													<img src="img/Dice6.png" width="40px" height="40px">
+													<img src="img/Dice6.png" width="40px" height="40px">
+													<b class="betAmt" id="BetOnSixSix">${{hornNumbers[3].amtbet}}</b><br>
+													<span>30 : 1</span>
+												</td>										
+												<td class="" ng-click="betOnHorn('6-5')">
+													<img src="img/Dice6.png" width="40px" height="40px">
+													<img src="img/Dice5.png" width="40px" height="40px">
+													<b class="betAmt" id="BetOnSixFive">${{hornNumbers[2].amtbet}}</b><br>
+													<span>15 : 1</span>
+												</td>
+											</tr>
+										</table>
+									</div>
+								</div>							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="row">
+					<!--box Two-->
+					<div class="col-sm-12" id="box2">
+					</div>
+					
+					<!--box Three--> 
+					<div class="col-sm-12" id="box3">
+					<div>You just rolled a {{diceNum}}</div>
+						<div>{{eren}}</div>
+						<div>{{loose}}</div>
+						<div>{{betOnTheBoard}}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+</body>
+
+<script>
+
+	$(document).ready(function(){
+		$("#PassLineArea").click(function(){
+			$("#OddPassLineArea").slideDown("slow");
+		});
+	})
+</script>
+
+</html>
