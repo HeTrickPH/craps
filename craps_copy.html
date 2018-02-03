@@ -116,15 +116,15 @@
 										<div class="col-8">
 											<table class="table table-bordered">
 												<tr>
-													<td>
-														<div id="come">Come</div>
-														$<b id="">{{come}}</b>
+													<td ng-click="addToComeBet()">
+														<div id="come" >Come</div>
+														$<b id="#">{{come}}</b>
 													</td>
 												</tr>
 												<tr>
-													<td>
+													<td ng-click="addToFieldBet()">
 														<div id="field">Field</div>
-														$<b id="">{{field}}</b>
+														$<b id="1s#">{{field}}</b>
 													</td>
 												</tr>		
 											</table>
@@ -135,7 +135,7 @@
 											<div class="row content">
 												<div class="col-12 pass_lines" id="PassLineArea" ng-click="addToPassLineBet()">
 													<b>Pass Line</b>
-													<b id="PassLineBetting">{{PassLine}}</b>
+													<b id="PassLineBetting" value="{{PassLine}}">{{PassLine}}</b>
 												</div>
 												
 												<div class="col-12 pass_lines" id="OddPassLineArea" ng-click="OddPassLineBet()" style="display:none">
@@ -144,25 +144,35 @@
 												</div>
 											</div> 
 										</div>	
-										<div class="col-3">
-											<div class="row">
-												<input id="walletBox" class="col-12" type="text" value="{{cashInWallet}}" disabled>
-												<input id="betAmtBox" class="col-12" type="text" value="Current bet: {{currentBetAmount}}" disabled>
-												<input id="opBox" class="col-12" type="text" value="Current op: {{currentOp}}" disabled>	
+										
+										<div id="userControlDiv" class="row content">
+											<div class="col-4">
+												<div class="row">
+													<input id="walletBox" class="col-12" type="text" value="{{cashInWallet}}" disabled>
+													<input id="betAmtBox" class="col-12" type="text" value="Current bet: {{currentBetAmount}}" disabled>
+													<input id="opBox" class="col-12" type="text" value="Current op: {{currentOp}}" disabled>
+													<input id="PnM" class="col-12" type="text" value="{{op}}" disabled>	
+												</div>
+											</div>
+
+											<div class="col-5">
+												<input type="button" value="1" class="moneyBut" id="coin1" ng-click="chooseCurrentBetAmount(1)">
+												<input type="button" value="5" class="moneyBut" id="coin5" ng-click="chooseCurrentBetAmount(5)">
+												<input type="button" value="25" class="moneyBut" id="coin25" ng-click="chooseCurrentBetAmount(25)">
+												<input type="button" value="100" class="moneyBut" id="coin100" ng-click="chooseCurrentBetAmount(100)">
+												<input type="button" value="500" class="moneyBut" id="coin500" ng-click="chooseCurrentBetAmount(500)">
+												<input type="button" value="1000" class="moneyBut" id="coin1000" ng-click="chooseCurrentBetAmount(1000)">
+												<div class="col-12">
+													<img id="plus" class="add_subt" src="img/plus.png" ng-click="addAndSub(1)">
+													<img id="minus" class="add_subt" src="img/minus.png" ng-click="addAndSub(2)">
+												</div>
+											</div>
+											<div class="col-3">
+												<input type="button" id="Roll_first" value="come out roll" class="roll btn btn-primary col-12" ng-hide="hidebut" ng-click="comeoutRoll()">
+												<input type="button" id="Roll_second" value="roll dice" class="roll btn btn-primary col-12" ng-hide="!hidebut" ng-click="rollDice()">
 											</div>
 										</div>
-										<div class="col-3">
-											<input type="button" id="Roll_first" value="come out roll" class="roll btn btn-primary" ng-model="comeoutRoll" ng-click="comeoutRoll()">
-											<input type="button" id="Roll_second" value="roll dice" class="roll btn btn-primary" ng-model="rollDice" style="display: none" ng-click="rollDice()">
-										</div>
-										<div class="col-3">
-											<input type="button" value="1" class="moneyBut" id="coin1" ng-click="chooseCurrentBetAmount(1)">
-											<input type="button" value="5" class="moneyBut" id="coin5" ng-click="chooseCurrentBetAmount(5)">
-											<input type="button" value="25" class="moneyBut" id="coin25" ng-click="chooseCurrentBetAmount(25)">
-											<input type="button" value="100" class="moneyBut" id="coin100" ng-click="chooseCurrentBetAmount(100)">
-											<input type="button" value="500" class="moneyBut" id="coin500" ng-click="chooseCurrentBetAmount(500)">
-											<input type="button" value="1000" class="moneyBut" id="coin1000" ng-click="chooseCurrentBetAmount(1000)">
-										</div>
+										
 									</div> 
 									
 								</div>
@@ -216,7 +226,7 @@
 											<tr>
 												<td colspan="2">
 													Horn
-													<input type="button" value="bet" class="btn btn-secondary" ng-click="">$<b id="">0</b>
+													<input type="button" value="bet" class="btn btn-secondary" ng-click="betOnAllHorn()">
 												</td>
 											</tr>
 											<tr>
@@ -257,16 +267,18 @@
 			</div>
 			<div class="col-md-2">
 				<div class="row">
-					<!--box Two-->
+					<!--box2-->
 					<div class="col-sm-12" id="box2">
 					</div>
 					
-					<!--box Three--> 
+					<!--box3--> 
 					<div class="col-sm-12" id="box3">
-						<div>You Rolled : {{diceNum}}</div>
-						<div>You Earned : {{earn}}</div>
-						<div>You Lose : {{loose}}</div>
-						<div>Total Bet on Table : {{betOnTheBoard}}</div>
+						<div id="discription" class="col-12">
+							<div>You Rolled : {{diceNum}}</div>
+							<div>You Earned : {{earn}}</div>
+							<div>You Lose : {{loose}}</div>
+							<div>Total Bet on Table : {{betOnTheBoard}}</div>						
+						</div>
 					</div>
 				</div>
 			</div>
@@ -280,10 +292,13 @@
 <script>
 
 	$(document).ready(function(){
-		$("#PassLineArea").click(function(){
-			$("#OddPassLineArea").slideDown("slow");
-		});
-	})
+		if(document.getElementById("PassLineBetting").value != 0){
+			$("#PassLineArea").click(function(){
+				$("#OddPassLineArea").slideDown("fast");
+			});
+		}	
+	});
+
 
 </script>
 
