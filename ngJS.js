@@ -1,8 +1,6 @@
 (function() {
 
-angular.module('crapsApp', [])
-                   .controller('crapsCtrlr', 
-function myCtlr($scope) {
+angular.module('crapsApp', []).controller('crapsCtrlr', function myCtlr($scope) {
 
 $scope.PassLine = 0;
 $scope.OddPassLine = 0;
@@ -27,22 +25,24 @@ var hornNumbers = [
 	{'num': "1-1", 'placeodd': 30, amtbet: 0},
 	{'num': "1-2", 'placeodd': 15, amtbet: 0},
 	{'num': "6-5", 'placeodd': 15, amtbet: 0},
-	{'num': "6-6", 'placeodd': 30, amtbet: 0}
+	{'num': "6-6", 'placeodd': 30, amtbet: 0} 
 ];
 
-var D1_dot;
-var D2_dot;
+var timer = null,
+	clicks = 0,
+	D1_dot,
+	D2_dot,
+	MoneyYouWin = 0;
 	
- $scope.currentBetAmount = 1;
+$scope.currentBetAmount = 0;
 // Not sure?
 $scope.onNumber = 'off';
 $scope.diceNum = "";
-$scope.eren = 0;
+$scope.earn = 0;
 $scope.loose = 0;
 $scope.betOnTheBoard = 0;
 	
-var placeWillBeON;
-var MoneyYouWin = 0;
+
 // Initialize values that get "bind"ed
 $scope.cashInWallet = 8000000000;
 $scope.placeNumbers = [];
@@ -52,6 +52,24 @@ hardWaysNumbers.map( hwn => $scope.hardWaysNumbers.push(hwn));
 $scope.hornNumbers = [];
 hornNumbers.map( x => $scope.hornNumbers.push(x) );
  
+//figger out I cklicked or db cklicked
+function clicked () {
+		debugger;
+		var CBA;
+        clicks++;  //count clicks
+        if(clicks === 1) {
+            timer = setTimeout(function() {
+                CBA = $scope.currentBetAmount; //perform single-click action    
+                clicks = 0;
+            }, 170);
+        } else {
+            clearTimeout(timer);
+           	CBA = $scope.currentBetAmount * (-1);   //perform double-click action
+            clicks = 0;
+		}
+		return CBA;
+}
+
 //betting on place bet
 $scope.addToPlaceBet = function(numberToBetOn) {     
                 var placeBet = _.find($scope.placeNumbers, x => x.num == numberToBetOn) ;
@@ -62,7 +80,7 @@ $scope.addToPlaceBet = function(numberToBetOn) {
                 $scope.currentOp = "done with addtoplacebet..." + numberToBetOn;
 	BetOnBoard();
 };
-
+	
 //betting on Hard Way
 $scope.betOnHardWays = function(hardwaycallout) {
                 var HardWaysbet = _.find(hardWaysNumbers, { 'num' : hardwaycallout });
@@ -78,16 +96,21 @@ $scope.betOnHardWays = function(hardwaycallout) {
 $scope.betOnHorn = function(horncallout) {
                 var HornBet = _.find(hornNumbers, { 'num' : horncallout });
                 if (HornBet!=undefined) {
-                                HornBet.amtbet += $scope.currentBetAmount;
-                                $scope.cashInWallet -= $scope.currentBetAmount;
+                	HornBet.amtbet += $scope.currentBetAmount;
+                	$scope.cashInWallet -= $scope.currentBetAmount;
                 }
                 $scope.currentOp = "done with betOnHorn..." + horncallout;
 	BetOnBoard();
 };
+	
+//betting on field bet
+$scope.betOnField = function(){
+	BetOnBoard();
+}
 
 // this is choose $scope.currentBetAmount that I want use
 $scope.chooseCurrentBetAmount = function(value) {
-                $scope.currentBetAmount = value;
+                $scope.currentBetAmount += value;
 };
  
 // This function handles the come out roll or th first roll
@@ -105,13 +128,14 @@ $scope.comeoutRoll = function() {
                                 document.getElementById(placeWillBeON).innerHTML = "<img class='onBut' src='img/onButton.png' width='42px' height='42px'>";
                                 //displayRollDice(true);
                 }
-                calcHardWaysbet();
-                calcHornbet();
+                calcHardWaysBet();
+                calcHornBet();
 				//Need To ask better Way!!!!!!!
                 hornNumbers.forEach(item => $scope.loose+= item.amtbet);
 				hornNumbers.forEach(item => item.amtbet= 0);
 				if ($scope.loose == 0) {
 					$scope.loose = "";
+					
 				}
 				thatIGot();
 	BetOnBoard();
@@ -120,9 +144,10 @@ $scope.comeoutRoll = function() {
 
 // Place a pass line bet
 $scope.addToPassLineBet = function() {
+	var BetAmount = clicked();
 	if ($scope.PassLine != undefined) {
-		$scope.PassLine += $scope.currentBetAmount;
-        $scope.cashInWallet -= $scope.currentBetAmount;
+		$scope.PassLine += BetAmount;
+        $scope.cashInWallet -= BetAmount;
 	}
 	$scope.currentOp = "done with Pass Line...Pass Line";
 	BetOnBoard();
@@ -143,7 +168,7 @@ $scope.rollDice = function(){
 		   		$scope.loose = 0;
                 var DiceDot = newDiceRoll();
                 if (DiceDot == 7) {
-					placeNumbers.forEach(item => $scope.loose+= item.amtbet,);
+					placeNumbers.forEach(item => $scope.loose+= item.amtbet);
 					placeNumbers.forEach(item => item.amtbet= 0);
                 	hardWaysNumbers.forEach(item => $scope.loose+= item.amtbet) ;
 					hardWaysNumbers.forEach(item => item.amtbet= 0) ;
@@ -188,10 +213,10 @@ function BetOnBoard() {
 	
 function thatIGot() {
 	if (MoneyYouWin != 0) {
-		$scope.eren = "You eren $" + MoneyYouWin;
+		$scope.earn = "You earn $" + MoneyYouWin;
 		MoneyYouWin = 0;
 	} else {
-		$scope.eren = "";
+		$scope.earn = "";
 	}
 } 
 
@@ -217,11 +242,9 @@ function newDiceRoll() {
                 document.getElementById("D1").innerHTML = "<img src='img/redDice"+ D1_dot + ".png' width='60px' height='60px'>";
                 document.getElementById("D2").innerHTML = "<img src='img/redDice"+ D2_dot + ".png' width='60px' height='60px'>";
                 var Dot_sum = D1_dot + D2_dot;
-				$scope.diceNum = D1_dot + D2_dot
+				$scope.diceNum = D1_dot + D2_dot;
                 return Dot_sum;
 }
-
-
 
 function calcOddPassLineBet(Dot) {
                 var placeBet = _.find(placeNumbers, { 'num' : Dot });
@@ -233,15 +256,15 @@ function calcOddPassLineBet(Dot) {
 //calculate place bet
 function calcPlaceBet(Dot) {
 	debugger;
-                var placeBet = _.find(placeNumbers, { 'num' : Dot }) ;
-                if (placeBet!=undefined) {
-					$scope.cashInWallet += Math.floor(placeBet.amtbet * placeBet.placeodd);
-					MoneyYouWin += Math.floor(placeBet.amtbet * placeBet.placeodd);
-                }
+	var placeBet = _.find(placeNumbers, { 'num' : Dot }) ;
+    if (placeBet!=undefined) {
+		$scope.cashInWallet += Math.floor(placeBet.amtbet * placeBet.placeodd);
+		MoneyYouWin += Math.floor(placeBet.amtbet * placeBet.placeodd);
+    }
 }
  
 //calculate Hard Way bet
-function calcHardWaysbet() {
+function calcHardWaysBet() {
                 var Dot;
                 var HardWaysbet;
                 if (D1_dot == D2_dot) {
@@ -261,14 +284,16 @@ function calcHardWaysbet() {
                 }
 }
  
-function calcHornbet() {
+function calcHornBet() {
                 debugger;
                 var Dot = D1_dot + "-" + D2_dot;
                 var HornBet = _.find(hornNumbers, { 'num' : Dot }) ;
                 if (HornBet!=undefined) {
-                   $scope.cashInWallet += Math.floor(HornBet.amtbet * HornBet.placeodd);
+                	$scope.cashInWallet += Math.floor(HornBet.amtbet * HornBet.placeodd);
 					MoneyYouWin +=  Math.floor(HornBet.amtbet * HornBet.placeodd);                
 				}
-}                         
+}
+
+	
   });
 }) ();

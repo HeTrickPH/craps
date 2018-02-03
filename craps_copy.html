@@ -118,13 +118,13 @@
 												<tr>
 													<td>
 														<div id="come">Come</div>
-														$<b id="">0</b>
+														$<b id="">{{come}}</b>
 													</td>
 												</tr>
 												<tr>
 													<td>
 														<div id="field">Field</div>
-														$<b id="">0</b>
+														$<b id="">{{field}}</b>
 													</td>
 												</tr>		
 											</table>
@@ -135,7 +135,7 @@
 											<div class="row content">
 												<div class="col-12 pass_lines" id="PassLineArea" ng-click="addToPassLineBet()">
 													<b>Pass Line</b>
-													$<b id="PassLineBetting">{{PassLine}}</b>
+													<b id="PassLineBetting">{{PassLine}}</b>
 												</div>
 												
 												<div class="col-12 pass_lines" id="OddPassLineArea" ng-click="OddPassLineBet()" style="display:none">
@@ -143,14 +143,14 @@
 													$<b id="OddPassLineBetting">{{OddPassLine}}</b>
 												</div>
 											</div> 
-										</div>											
+										</div>	
 										<div class="col-3">
 											<div class="row">
-												<div id="Money" class="col-12">{{cashInWallet}}</div>
-												<p class="col-12">Current bet: {{currentBetAmount}}</p>
-												<p class="col-12">Current op: {{currentOp}}</p>													
+												<input id="walletBox" class="col-12" type="text" value="{{cashInWallet}}" disabled>
+												<input id="betAmtBox" class="col-12" type="text" value="Current bet: {{currentBetAmount}}" disabled>
+												<input id="opBox" class="col-12" type="text" value="Current op: {{currentOp}}" disabled>	
 											</div>
-										</div>	
+										</div>
 										<div class="col-3">
 											<input type="button" id="Roll_first" value="come out roll" class="roll btn btn-primary" ng-model="comeoutRoll" ng-click="comeoutRoll()">
 											<input type="button" id="Roll_second" value="roll dice" class="roll btn btn-primary" ng-model="rollDice" style="display: none" ng-click="rollDice()">
@@ -263,10 +263,10 @@
 					
 					<!--box Three--> 
 					<div class="col-sm-12" id="box3">
-					<div>You just rolled a {{diceNum}}</div>
-						<div>{{eren}}</div>
-						<div>{{loose}}</div>
-						<div>{{betOnTheBoard}}</div>
+						<div>You Rolled : {{diceNum}}</div>
+						<div>You Earned : {{earn}}</div>
+						<div>You Lose : {{loose}}</div>
+						<div>Total Bet on Table : {{betOnTheBoard}}</div>
 					</div>
 				</div>
 			</div>
@@ -284,6 +284,7 @@
 			$("#OddPassLineArea").slideDown("slow");
 		});
 	})
+
 </script>
 
 </html>
